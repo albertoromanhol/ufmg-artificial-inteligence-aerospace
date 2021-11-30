@@ -146,7 +146,9 @@ if __name__ == "__main__":
     max_collisions = (n_queens*(n_queens-1))/2
     print('max fitness:', max_collisions)
 
-    n_population = (2*n_queens)**2
+    n_population = 2*(n_queens**2)
+    print('n_population:', n_population)
+
     population = [genotype_queens(n_queens) for _ in range(n_population)]
 
     best_pouplation = find_best_fitness(max_collisions, population)
