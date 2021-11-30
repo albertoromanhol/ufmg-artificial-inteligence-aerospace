@@ -139,32 +139,31 @@ def print_board(board_queens, n):
 # gerar genotipo aleatorio para primeira popoulação
 def genotype_queens(n):
     return [ random.randint(1, n) for _ in range(n)]
-    
-# programa mais, que trata do imput e chama as funcoes
-if __name__ == "__main__":
-    n_queens = int(input("number of queens: "))
-    max_collisions = (n_queens*(n_queens-1))/2
-    print('max fitness:', max_collisions)
 
-    n_population = 2*(n_queens**2)
-    print('n_population:', n_population)
+# main, que trata do imput e chama as funcoes
+n_queens = int(input("number of queens: "))
+max_collisions = (n_queens*(n_queens-1))/2
+print('max fitness:', max_collisions)
 
-    population = [genotype_queens(n_queens) for _ in range(n_population)]
+n_population = 2*(n_queens**2)
+print('n_population:', n_population)
 
-    best_pouplation = find_best_fitness(max_collisions, population)
-    bigger_fitness = bigger_fitness(best_pouplation)
+population = [genotype_queens(n_queens) for _ in range(n_population)]
 
-    print('-----------------------------------')
-    print('n queen problem - genetic algorithm')
-    print('n_queens:', n_queens)
-    print('n_population:', n_population)
-    print('max fitness:', max_collisions)
-    print('-----------------------------------')
-    if fitness(bigger_fitness) == max_collisions:
-        print('found a solution by fitness')
-    else:
-        print('no solution, stopped by generation limit')
-    print('found fitness:', fitness(bigger_fitness))
-    print('best_queen:',bigger_fitness)
-    print_board(bigger_fitness, n_queens)
-    print('-----------------------------------')
+best_pouplation = find_best_fitness(max_collisions, population)
+bigger_fitness = bigger_fitness(best_pouplation)
+
+print('-----------------------------------')
+print('n queen problem - genetic algorithm')
+print('n_queens:', n_queens)
+print('n_population:', n_population)
+print('max fitness:', max_collisions)
+print('-----------------------------------')
+if fitness(bigger_fitness) == max_collisions:
+    print('found a solution by fitness')
+else:
+    print('no solution, stopped by generation limit')
+print('found fitness:', fitness(bigger_fitness))
+print('best_queen:',bigger_fitness)
+print_board(bigger_fitness, n_queens)
+print('-----------------------------------')
