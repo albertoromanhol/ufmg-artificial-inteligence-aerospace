@@ -1,4 +1,4 @@
-# Primeira lista de exercícios. 
+# Primeira lista de exercícios
 ## Alberto Romanhol Moreira - 2017051564
 
 ### Problema N-Queens
@@ -87,10 +87,10 @@ def probability(chromosome, fitness):
     return fitness(chromosome) / max_collisions
 ```
 
-Cria-se então, a função que será responsável por escolher o método a ser utilizado, com uma canche de 50% para cada um.
+Cria-se então, a função que será responsável por escolher o método a ser utilizado, com uma chance de 20% para o torneio.
 ```python
 def pick_parent(population):
-    selected_tournment_probability = 0.5
+    selected_tournment_probability = 0.2
 
     if (selected_tournment_probability > rnd.random()):
         parent = selected_tournment(population)
@@ -227,7 +227,7 @@ print('n_population:', n_population)
 
 population = [genotype_queens(n_queens) for _ in range(n_population)]
 
-best_pouplation = find_best_population(max_collisions, population)
+best_pouplation = find_best_population(population)
 bigger_fitness = bigger_fitness_genotype(best_pouplation)
 ```
 

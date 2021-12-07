@@ -55,11 +55,11 @@ def new_generation(population):
 
     return new_population
 
-def probability(chromosome, fitness):
+def probability(chromosome):
     return fitness(chromosome) / max_collisions
 
 def pick_parent(population):
-    selected_tournment_probability = 0.5
+    selected_tournment_probability = 0.2
 
     if (selected_tournment_probability > random.random()):
         parent = selected_tournment(population)
@@ -75,7 +75,7 @@ def selected_tournment(population):
     
 # VERIFICAR ISSO AQUI
 def roulette_wheel(probabilities):
-    probabilities = [probability(n, fitness) for n in population]
+    probabilities = [probability(n) for n in population]
 
     total = sum(probabilities)
     pick = random.uniform(0, total)
