@@ -1,19 +1,23 @@
 import random
 import numpy
 
-def find_best_fitness(max_fitness, population):
+def find_best_population(population):
     generation = 0
     
-    max_generation = -13*len(population[0]) + 277
-    print('max_generation = {}'.format(max_generation))
+    max_generation = get_max_generation()
     
-    while generation < max_generation and not max_fitness in [fitness(queens) for queens in population]:
+    while generation < max_generation and not max_collisions in [fitness(queens) for queens in population]:
         generation += 1
-        population = new_generation(population, fitness)
+        population = new_generation(population)
         print('generation = {}, fitness = {}'.format(generation, (max([fitness(n) for n in population]))))
 
     print('found a generation', generation)
     return population
+
+def get_max_generation():
+    max_generation = -13*len(population[0]) + 277
+    print('max_generation = {}'.format(max_generation))
+    return max_generation
 
 def fitness(chromosome):
     score = 0
@@ -36,13 +40,12 @@ def fitness(chromosome):
             score += 1
     return score/2
 
-def new_generation(population, fitness):
+def new_generation(population):
     new_population = []
-    probabilities = [probability(n, fitness) for n in population]
 
     for _ in range(len(population)):
-        parent1 = pick_parent(population, probabilities)
-        parent2 = pick_parent(population, probabilities)
+        parent1 = pick_parent(population)
+        parent2 = pick_parent(population)
         child = pick_children(parent1, parent2)
         # escolhe a melhor dos dois filhosd = pick_childrens(parent1, parent2)
         # show_children(child)
@@ -55,13 +58,13 @@ def new_generation(population, fitness):
 def probability(chromosome, fitness):
     return fitness(chromosome) / max_collisions
 
-def pick_parent(population, probabilities):
-    selected_tournment_probability = 0.1
+def pick_parent(population):
+    selected_tournment_probability = 0.5
 
     if (selected_tournment_probability > random.random()):
         parent = selected_tournment(population)
     else:
-        parent = population[roulette_wheel(probabilities)]
+        parent = population[roulette_wheel(population)]
 
     return parent
 
@@ -72,6 +75,8 @@ def selected_tournment(population):
     
 # VERIFICAR ISSO AQUI
 def roulette_wheel(probabilities):
+    probabilities = [probability(n, fitness) for n in population]
+
     total = sum(probabilities)
     pick = random.uniform(0, total)
     current = 0
@@ -150,7 +155,7 @@ print('n_population:', n_population)
 
 population = [genotype_queens(n_queens) for _ in range(n_population)]
 
-best_pouplation = find_best_fitness(max_collisions, population)
+best_pouplation = find_best_population(population)
 bigger_fitness = bigger_fitness(best_pouplation)
 
 print('-----------------------------------')
