@@ -26,4 +26,4 @@ def run(image, generation_size, population_size, mutation_percent, flag_filter):
         population = gf.mutation(population, num_parents_mating, mutation_percent)
         gf.print_and_save_image(iteration, target_image, qualities, population, image_shape, 500, os.curdir+'//')
 
-run('apple_low_res.jpg', 10000, 64, 0.05, 1)
+run('heart.png', 10000, 64, 0.05, 1)
