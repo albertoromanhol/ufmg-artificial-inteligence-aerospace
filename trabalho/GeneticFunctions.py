@@ -4,18 +4,20 @@ import operator
 import matplotlib.pyplot
 import random
 import itertools
+from skimage.metrics import structural_similarity as ssim
 
 ## 
 
 def image_to_chromossome(image_array):
-    return np.reshape(a = image_array, newshape = (functools.reduce(operator.mul, image_array.shape)))
+    return np.reshape(a = image_array, 
+        newshape = (functools.reduce(operator.mul, image_array.shape)))
 
 def chromossome_to_image(chromossome_array, image_shape):
     return np.reshape(a = chromossome_array, newshape = image_shape)
 
 ##
 
-def initial_population(image_shape, n_individuals):
+def generate_initial_population(image_shape, n_individuals):
     population = np.empty(
         shape=(n_individuals, functools.reduce(operator.mul, image_shape)),
         dtype=np.uint8)
@@ -28,7 +30,7 @@ def initial_population(image_shape, n_individuals):
 
 ##
 
-def fitness(target_chromosome, solution):
+def calculate_fitness(target_chromosome, solution):
     fitness = np.mean(np.abs(target_chromosome - solution))
     fitness = np.sum(target_chromosome) - fitness
 
@@ -38,7 +40,7 @@ def calculate_population_fitness(target_chromossome, population):
     qualities = np.zeros(population.shape[0])
 
     for i in range(population.shape[0]):
-        qualities[i] = fitness(target_chromossome, population[i, :])
+        qualities[i] = calculate_fitness(target_chromossome, population[i, :])
 
     return qualities
 
@@ -48,38 +50,38 @@ def select_mating_pool(population, qualities, num_parents):
     parents = np.empty((num_parents, population.shape[1]), dtype=np.uint8)
 
     for parent_num in range(num_parents):
-        max_fitness_idx = np.where(qualities == np.max(qualities))
-        max_fitness_idx = max_fitness_idx[0][0]
+        max_fitness_index = np.where(qualities == np.max(qualities))
+        max_fitness_index = max_fitness_index[0][0]
 
-        parents[parent_num, :] = population[max_fitness_idx, :]
+        parents[parent_num, :] = population[max_fitness_index, :]
 
-        qualities[max_fitness_idx] = -1
+        qualities[max_fitness_index] = -1
 
     return parents
 
 def crossover(parents, image_shape, n_individuals):
-    children = np.empty(
+    population = np.empty(
         shape=(n_individuals, functools.reduce(operator.mul, image_shape)),
         dtype=np.uint8)
 
-    children[0:parents.shape[0], :] = parents
+    population[0:parents.shape[0], :] = parents
     
-    num_newly_genereted_children = n_individuals - parents.shape[0]
-    parents_permutation = list(itertools.permutations(iterable = np.arange(0, parents.shape[0]), r = 2))
-    selected_permutations = random.sample(range(len(parents_permutation)), num_newly_genereted_children)
+    number_genereted_population = n_individuals - parents.shape[0]
+    parents_permutation_possible = list(itertools.permutations(iterable = np.arange(0, parents.shape[0]), r = 2))
+    selected_permutations = random.sample(range(len(parents_permutation_possible)), number_genereted_population)
     
-    comb_index = parents.shape[0]
+    genes_index = parents.shape[0]
     
-    for comb in range(len(selected_permutations)):
-        selected_comb_index = selected_permutations[comb]
-        selected_comb = parents_permutation[selected_comb_index]
+    for genes in range(len(selected_permutations)):
+        selected_genes_index = selected_permutations[genes]
+        selected_genes = parents_permutation_possible[selected_genes_index]
 
-        half_size = children.shape[1]//2
+        half_size = population.shape[1]//2
 
-        children[comb_index + comb, :half_size] = parents[selected_comb[0], :half_size]
-        children[comb_index + comb, half_size:] = parents[selected_comb[1], half_size:]
+        population[genes_index + genes, :half_size] = parents[selected_genes[0], :half_size]
+        population[genes_index + genes, half_size:] = parents[selected_genes[1], half_size:]
   
-    return children
+    return population
 
 def mutation(population, num_parents_mating, mutation_percent):
     for index in range(num_parents_mating, population.shape[0]):
@@ -95,9 +97,16 @@ def mutation(population, num_parents_mating, mutation_percent):
 
 ##
 
-def save_image(current_iteration, qualities, new_population, image_shape, save_point, save_diretory):
+def print_and_save_image(current_iteration, target_image, qualities, new_population, image_shape, save_point, save_diretory):
     if current_iteration % 100 == 0:
         print("Generation: ", current_iteration, "\t Fitness: ", np.max(qualities))
+        
+        image =  chromossome_to_image(new_population[np.where(qualities == np.max(qualities))[0][0], :], target_image.shape)
+        ssimResult = ssim(target_image, image, multichannel=True)
+        print('SSIM Score: ' + str(ssimResult))
+
+        print('\n')	
+
     
     if current_iteration % save_point == 0:
         matplotlib.pyplot.imsave(save_diretory+'/'+str(
