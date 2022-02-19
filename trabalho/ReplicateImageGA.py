@@ -1,3 +1,19 @@
+'''
+UNIVERSIDADE FEDERAL DO MINAS GERAIS
+ENGEHARIA AEROESPACIAL
+INTELIGÊNCIA ARTIFICIAL
+
+TRABALHO FINAL: REPICAÇÃO DE IMAGENS UTILIAZNDO ALGORÍTIMO GENÉTICO
+
+GRUPO 3:
+- ALBERTO ROMANHOL 
+- ARTHUR AUGUSTO
+- ELDER TEVES 
+- RAPHAEL GUILHERME
+'''
+
+# %%
+
 import matplotlib.pyplot
 import numpy as np
 import itertools
@@ -10,7 +26,7 @@ import os
 
 from skimage.metrics import structural_similarity as ssim
 
-## 
+# %% 
 
 def image_to_chromossome(image_array):
     return np.reshape(a = image_array, 
@@ -19,7 +35,7 @@ def image_to_chromossome(image_array):
 def chromossome_to_image(chromossome_array, image_shape):
     return np.reshape(a = chromossome_array, newshape = image_shape)
 
-##
+# %%
 
 def generate_initial_population(image_shape, n_individuals):
     population = np.empty(
@@ -32,7 +48,7 @@ def generate_initial_population(image_shape, n_individuals):
 
     return population
 
-##
+# %%
 
 def calculate_fitness(target_chromosome, solution):
     fitness = np.mean(np.abs(target_chromosome - solution))
@@ -48,7 +64,7 @@ def calculate_population_fitness(target_chromossome, population):
 
     return qualities
 
-##
+# %%
 
 def select_mating_pool(population, qualities, num_parents):
     parents = np.empty((num_parents, population.shape[1]), dtype=np.uint8)
@@ -99,7 +115,7 @@ def mutation(population, num_parents_mating, mutation_percent):
     
     return population
 
-##
+# %%
 
 def print_and_save_image(current_iteration, target_image, qualities, new_population, image_shape, save_point, save_diretory):
     if current_iteration % 100 == 0:
@@ -118,7 +134,7 @@ def print_and_save_image(current_iteration, target_image, qualities, new_populat
             chromossome_to_image(new_population[np.where(qualities == np.max(qualities))[0][0], :], 
             image_shape))
 
-##
+# %%
 
 def run(image, generation_size, population_size, mutation_percent, gaussian_filter = False):
     target_image = imageio.imread(image, pilmode="RGB")
@@ -142,5 +158,5 @@ def run(image, generation_size, population_size, mutation_percent, gaussian_filt
         population = mutation(population, num_parents_mating, mutation_percent)
         print_and_save_image(iteration, target_image, qualities, population, image_shape, 500, os.curdir+'//')
 
-##
+# %%
 run('heart.png', 20000, 128, 0.05, True)
